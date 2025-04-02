@@ -2,15 +2,17 @@
 
 import { useState, useEffect } from 'react';
 
-const page = () => {
+const page = ({params}) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
+
       try {
-        const response = await fetch('https://worldnamedays.makemywebsite.au/api/by-country');
+        const {name}= params;
+        const response = await fetch(`https://worldnamedays.makemywebsite.au/api/country/${name}`);
         
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -37,28 +39,22 @@ const page = () => {
       <h1 className="text-3xl font-bold mb-8">{data.title}</h1>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {data.countries.map((country) => (
+        {data.namedays.map((nameday) => (
           <div 
-            key={country.id}
+            key={nameday.id}
             className="border rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
           >
             <div className="p-4">
               <div className="flex items-center mb-3">
-                <h2 className="text-xl font-semibold">{country.name}</h2>
+                <h2 className="text-xl font-semibold">{nameday.name}</h2>
               </div>
               
               <div className="space-y-2 text-gray-600">
-                <p><span className="font-medium">Code:</span> {country.code}</p>
-                <p><span className="font-medium">Priority:</span> {country.priority}</p>
-                <p><span className="font-medium">Last Updated:</span> {new Date(country.updated_at).toLocaleDateString()}</p>
+                <p><span className="font-medium">Day:</span> {nameday.day}</p>
+                <p><span className="font-medium">Month:</span> {nameday.month}</p>
+                <p><span className="font-medium">Last Updated:</span> {new Date(nameday.updated_at).toLocaleDateString()}</p>
               </div>
 
-              <a 
-                href={`/country/${country.name}`}
-                className="mt-4 inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-              >
-                View Country
-              </a>
             </div>
           </div>
         ))}
